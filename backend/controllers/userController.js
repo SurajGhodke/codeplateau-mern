@@ -44,12 +44,15 @@ const authUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
+  const { _id, name, role } = user;
+
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       phone: user.phone,
+      role: user.role,
       token: generateToken(user._id),
     });
   } else {
@@ -70,6 +73,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      role: user.role,
     });
   } else {
     res.status(404);
@@ -77,4 +81,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, authUser, getUserProfile };
+const signout = (req, res) => {
+  res.clearCookie("token");
+  res.json({
+    message: "User signout successfully",
+  });
+};
+
+export { signout, registerUser, authUser, getUserProfile };
